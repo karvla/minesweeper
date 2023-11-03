@@ -1,11 +1,23 @@
 ﻿namespace Minesweeper;
 
+
 public class Minefield
 {
-    const int width = 5;
-    const int height = 5;
-    bool[,] bombs = new bool[height, width];
-    bool[,] uncoveredTiles = new bool[height, width];
+    public int width { get; }
+
+    public int height { get; }
+
+    private readonly bool[,] bombs;
+
+    private bool[,] uncoveredTiles;
+
+    public Minefield(int width, int height)
+    {
+        this.width = width;
+        this.height = width;
+        this.bombs = new bool[height, width];
+        this.uncoveredTiles = new bool[height, width];
+    }
 
     public void SetBomb(int x, int y)
     {

@@ -4,7 +4,7 @@ class Minesweeper
 {
     static void Main()
     {
-        var field = new Minefield();
+        var field = new Minefield(5, 5);
 
         //set the bombs...
         field.SetBomb(0, 0);

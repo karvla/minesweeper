@@ -4,10 +4,13 @@ using Minesweeper;
 [TestClass]
 public class Tests
 {
+    const int width = 5;
+    const int height = 5;
+
     [TestMethod]
     public void TestAdjecentBombs()
     {
-        var field = new Minefield();
+        var field = new Minefield(width, height);
 
         //set the bombs...
         field.SetBomb(0, 0);
@@ -24,7 +27,7 @@ public class Tests
         //1|XX111
         //0|X31
 
-        var expected = new int[5, 5] {
+        var expected = new int[width, height] {
             { 2, 3, 1, 0, 0 },
             { 2, 2, 1, 1, 1 },
             { 2, 2, 1, 1, 0 },
@@ -32,9 +35,9 @@ public class Tests
             { 1, 0, 1, 0, 0 },
         };
 
-        for (int y = 0; y < 5; y++)
+        for (int y = 0; y < width; y++)
         {
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < height; x++)
             {
                 Assert.AreEqual(expected[y, x], field.GetAdjecentBombs(x, y), $"for x: {x}, y: {y}");
             }
@@ -44,7 +47,7 @@ public class Tests
     [TestMethod]
     public void TestUncoverTiles()
     {
-        var field = new Minefield();
+        var field = new Minefield(5, 5);
 
         field.SetBomb(0, 1);
         field.SetBomb(1, 0);
