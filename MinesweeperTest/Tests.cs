@@ -40,4 +40,33 @@ public class Tests
             }
         }
     }
+
+    [TestMethod]
+    public void TestUncoverTiles()
+    {
+        var field = new Minefield();
+
+        field.SetBomb(0, 1);
+        field.SetBomb(1, 0);
+        field.SetBomb(1, 1);
+        field.UncoverTiles(2, 2);
+
+        //the mine field should look like this now:
+        //  012
+        //2|???  
+        //1|???  
+        //0|??   
+
+        Assert.IsFalse(field.IsUncovered(0, 0));
+        Assert.IsFalse(field.IsUncovered(1, 0));
+        Assert.IsFalse(field.IsUncovered(2, 0));
+
+        Assert.IsFalse(field.IsUncovered(0, 1));
+        Assert.IsFalse(field.IsUncovered(1, 1));
+        Assert.IsFalse(field.IsUncovered(2, 1));
+
+        Assert.IsFalse(field.IsUncovered(0, 2));
+        Assert.IsFalse(field.IsUncovered(1, 2));
+        Assert.IsTrue(field.IsUncovered(2, 2));
+    }
 }

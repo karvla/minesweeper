@@ -5,6 +5,7 @@ public class Minefield
     const int width = 5;
     const int height = 5;
     bool[,] bombs = new bool[height, width];
+    bool[,] uncoveredTiles = new bool[height, width];
 
     public void SetBomb(int x, int y)
     {
@@ -22,12 +23,42 @@ public class Minefield
 
     }
 
+    public bool IsUncovered(int x, int y)
+    {
+        return uncoveredTiles[y, x];
+    }
+
+    public void UncoverTiles(int x, int y)
+    {
+        if (IsUncovered(x, y))
+        {
+            return;
+        }
+
+        uncoveredTiles[y, x] = true;
+        if (GetAdjecentBombs(x, y) > 0)
+        {
+            return;
+        }
+
+
+        GetAdjecentTilePositions(x, y)
+            .ForEach(posistion => UncoverTiles(posistion.Item1, posistion.Item2));
+
+    }
+
     public int GetAdjecentBombs(int x, int y)
+    {
+        return GetAdjecentTilePositions(x, y).Where((posistion) => IsBomb(posistion.Item1, posistion.Item2)).Count();
+    }
+
+
+    private List<(int, int)> GetAdjecentTilePositions(int x, int y)
     {
         return (from xOffset in new List<int> { 1, 0, -1 }
                 from yOffset in new List<int> { 1, 0, -1 }
                 where (!(xOffset == 0 && yOffset == 0))
                 where (IsWithinBoundary(x + xOffset, y + yOffset))
-                select (IsBomb(x + xOffset, y + yOffset))).Count(isBomb => isBomb);
+                select (x + xOffset, y + yOffset)).ToList();
     }
 }
