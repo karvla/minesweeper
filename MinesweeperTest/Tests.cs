@@ -8,7 +8,7 @@ public class Tests
     const int height = 5;
 
     [TestMethod]
-    public void TestAdjecentBombs()
+    public void Correct_number_of_adjacent_bombs()
     {
         var field = new Minefield(width, height);
 
@@ -45,9 +45,9 @@ public class Tests
     }
 
     [TestMethod]
-    public void TestUncoverTiles()
+    public void Uncover_tiles_shoud_not_propagate_if_origin_has_adjacent_bombs()
     {
-        var field = new Minefield(5, 5);
+        var field = new Minefield(3, 3);
 
         field.SetBomb(0, 1);
         field.SetBomb(1, 0);
@@ -72,4 +72,33 @@ public class Tests
         Assert.IsFalse(field.IsUncovered(1, 2));
         Assert.IsTrue(field.IsUncovered(2, 2));
     }
+
+    [TestMethod]
+    public void Initialize_correct_number_of_bombs()
+    {
+        var width = 10;
+        var height = 5;
+
+        foreach (int numberOfBombs in new List<int> { 0, 10, 20, 30, 100 })
+        {
+            var field = new Minefield(width, height);
+            field.InitializeRandomBombs(numberOfBombs);
+            Assert.AreEqual(Math.Min(numberOfBombs, width * height), field.NumberOfBombs);
+        }
+    }
+
+    [TestMethod]
+    public void Count_corect_number_of_bombs()
+    {
+        var width = 10;
+        var height = 5;
+
+        var field = new Minefield(width, height);
+        Assert.AreEqual(0, field.NumberOfBombs);
+        field.SetBomb(0, 0);
+        Assert.AreEqual(1, field.NumberOfBombs);
+        field.SetBomb(0, 1);
+        Assert.AreEqual(2, field.NumberOfBombs);
+    }
+
 }

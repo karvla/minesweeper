@@ -7,6 +7,11 @@ public class Minefield
 
     public int height { get; }
 
+    public int NumberOfBombs
+    {
+        get => bombs.Cast<bool>().Count(b => b);
+    }
+
     private readonly bool[,] bombs;
 
     private bool[,] uncoveredTiles;
@@ -73,4 +78,24 @@ public class Minefield
                 where (IsWithinBoundary(x + xOffset, y + yOffset))
                 select (x + xOffset, y + yOffset)).ToList();
     }
+
+    public void InitializeRandomBombs(int numberOfBombs)
+    {
+        numberOfBombs = Math.Min(numberOfBombs, width * height);
+        var random = new Random();
+        var allPositions =
+            (from x in Enumerable.Range(0, width)
+             from y in Enumerable.Range(0, height)
+             select (x, y)).ToList();
+
+        while (numberOfBombs > 0)
+        {
+            var bombPos = random.Next(allPositions.Count);
+            var randomPos = allPositions[bombPos];
+            SetBomb(randomPos.x, randomPos.y);
+            allPositions.RemoveAt(bombPos);
+            numberOfBombs--;
+        }
+    }
+
 }
