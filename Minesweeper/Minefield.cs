@@ -14,7 +14,7 @@ public class Minefield
     public Minefield(int width, int height)
     {
         this.width = width;
-        this.height = width;
+        this.height = height;
         this.bombs = new bool[height, width];
         this.uncoveredTiles = new bool[height, width];
     }
