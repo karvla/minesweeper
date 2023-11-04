@@ -7,12 +7,15 @@ public interface IGameDisplay
 
 public class StdOutGameDisplay : IGameDisplay
 {
-    private Minefield minefield;
-    private bool firstDraw = true;
+    Minefield minefield;
+    GameControler gameControler;
 
-    public StdOutGameDisplay(Minefield minefield)
+    bool firstDraw = true;
+
+    public StdOutGameDisplay(Minefield minefield, GameControler controller)
     {
         this.minefield = minefield;
+        this.gameControler = controller;
     }
 
 
@@ -35,25 +38,25 @@ public class StdOutGameDisplay : IGameDisplay
 
     public void DrawGame()
     {
-        var mapString = "";
-        mapString += "  " + string.Concat(Enumerable.Range(0, minefield.width).Select(PadInteger)) + Environment.NewLine;
-
         if (!firstDraw)
         {
-            firstDraw = false;
-            Console.SetCursorPosition(0, Console.CursorTop - minefield.height - 2);
+            Console.SetCursorPosition(0, Console.CursorTop - minefield.height);
         }
+        firstDraw = false;
 
         for (int y = minefield.height - 1; y >= 0; y--)
         {
-            mapString += PadInteger(y) + '|';
             for (int x = 0; x < minefield.width; x++)
             {
-                mapString += GetPixelValue(minefield.GetStateAtPosition(x, y));
+                if (x == gameControler.cursorX && y == gameControler.cursorY)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                }
+                Console.Write(GetPixelValue(minefield.GetStateAtPosition(x, y)));
+                Console.ResetColor();
             }
-            mapString += Environment.NewLine;
+            Console.Write(Environment.NewLine);
         }
-        Console.Write(mapString);
     }
 
     private static String PadInteger(int i) => i > 9 ? i.ToString() : " " + i.ToString();
