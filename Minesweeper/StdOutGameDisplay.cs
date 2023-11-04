@@ -1,34 +1,60 @@
 namespace Minesweeper;
 
-public class StdOutGameDisplay
+public interface IGameDisplay
+{
+    void DrawGame();
+}
+
+public class StdOutGameDisplay : IGameDisplay
 {
     private Minefield minefield;
+    private bool firstDraw = true;
 
     public StdOutGameDisplay(Minefield minefield)
     {
         this.minefield = minefield;
     }
 
-    public void DrawGame()
-    {
 
+    static private String GetPixelValue(TileState state)
+    {
+        if (state.isCovered)
+        {
+            return "⬛";
+        }
+        if (state.isBomb)
+        {
+            return "💣";
+        }
+        if (state.nAdjecentBombs == 0)
+        {
+            return "  ";
+        }
+        return PadInteger(state.nAdjecentBombs);
     }
 
-    static String GetMapString<T>(T[,] map, Func<T, char> convertFn)
+    public void DrawGame()
     {
         var mapString = "";
-        var height = map.GetLength(0);
-        var width = map.GetLength(1);
-        mapString += "  " + string.Concat(Enumerable.Range(0, width).Select(i => i.ToString())) + Environment.NewLine;
-        for (int y = height - 1; y >= 0; y--)
+        mapString += "  " + string.Concat(Enumerable.Range(0, minefield.width).Select(PadInteger)) + Environment.NewLine;
+
+        if (!firstDraw)
         {
-            mapString += y.ToString() + '|';
-            for (int x = 0; x < width; x++)
+            firstDraw = false;
+            Console.SetCursorPosition(0, Console.CursorTop - minefield.height - 2);
+        }
+
+        for (int y = minefield.height - 1; y >= 0; y--)
+        {
+            mapString += PadInteger(y) + '|';
+            for (int x = 0; x < minefield.width; x++)
             {
-                mapString += convertFn(map[x, y]);
+                mapString += GetPixelValue(minefield.GetStateAtPosition(x, y));
             }
             mapString += Environment.NewLine;
         }
-        return mapString;
+        Console.Write(mapString);
     }
+
+    private static String PadInteger(int i) => i > 9 ? i.ToString() : " " + i.ToString();
 }

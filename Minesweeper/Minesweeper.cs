@@ -1,17 +1,33 @@
-﻿namespace Minesweeper;
+﻿using System.Text.RegularExpressions;
+
+namespace Minesweeper;
 
 class Minesweeper
 {
     static void Main()
     {
-        var field = new Minefield(5, 5);
+        var field = new Minefield(9, 9);
 
-        //set the bombs...
-        field.SetBomb(0, 0);
-        field.SetBomb(0, 1);
-        field.SetBomb(1, 1);
-        field.SetBomb(1, 4);
-        field.SetBomb(4, 2);
+        field.InitializeRandomBombs(10);
+
+
+        var coordsRegex = new Regex(@"(\d+)\D+(\d+)");
+        var display = new StdOutGameDisplay(field);
+        while (true)
+        {
+            display.DrawGame();
+            Console.Write("Enter position:");
+            var input = Console.ReadLine();
+            if (input is null)
+            {
+                continue;
+            }
+            var match = coordsRegex.Match(input);
+            var x = int.Parse(match.Groups[1].Value);
+            var y = int.Parse(match.Groups[2].Value);
+            field.UncoverTiles(x, y);
+        }
+
 
         //the mine field should look like this now:
         //  01234

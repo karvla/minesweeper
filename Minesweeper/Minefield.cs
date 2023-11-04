@@ -1,5 +1,18 @@
 ﻿namespace Minesweeper;
 
+public struct TileState
+{
+    public readonly bool isBomb;
+    public readonly bool isCovered;
+    public readonly int nAdjecentBombs;
+
+    public TileState(bool isBomb, bool isCovered, int nAdjecentBombs)
+    {
+        this.isBomb = isBomb;
+        this.isCovered = isCovered;
+        this.nAdjecentBombs = nAdjecentBombs;
+    }
+}
 
 public class Minefield
 {
@@ -26,23 +39,22 @@ public class Minefield
 
     public void SetBomb(int x, int y)
     {
+        if (!IsWithinBoundary(x, y))
+        {
+            return;
+        }
         bombs[y, x] = true;
     }
 
-    public bool IsBomb(int x, int y)
-    {
-        return bombs[y, x];
-    }
+    public bool IsBomb(int x, int y) => bombs[y, x];
 
-    private bool IsWithinBoundary(int x, int y)
-    {
-        return (0 <= x && x < width && 0 <= y && y < height);
+    private bool IsWithinBoundary(int x, int y) => (0 <= x && x < width && 0 <= y && y < height);
 
-    }
+    public bool IsUncovered(int x, int y) => uncoveredTiles[y, x];
 
-    public bool IsUncovered(int x, int y)
+    public TileState GetStateAtPosition(int x, int y)
     {
-        return uncoveredTiles[y, x];
+        return new TileState(isCovered: !IsUncovered(x, y), isBomb: IsBomb(x, y), nAdjecentBombs: GetAdjecentBombs(x, y));
     }
 
     public void UncoverTiles(int x, int y)
@@ -68,7 +80,6 @@ public class Minefield
     {
         return GetAdjecentTilePositions(x, y).Where((posistion) => IsBomb(posistion.Item1, posistion.Item2)).Count();
     }
-
 
     private List<(int, int)> GetAdjecentTilePositions(int x, int y)
     {
