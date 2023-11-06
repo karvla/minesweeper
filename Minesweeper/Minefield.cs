@@ -14,6 +14,13 @@ public struct TileState
     }
 }
 
+public enum GameState
+{
+    Playing,
+    Lost,
+    Won,
+}
+
 public class Minefield
 {
     public int width { get; }
@@ -57,8 +64,41 @@ public class Minefield
         return new TileState(isCovered: !IsUncovered(x, y), isBomb: IsBomb(x, y), nAdjecentBombs: GetAdjecentBombs(x, y));
     }
 
+    public GameState GetGameState()
+    {
+        int nUncovered = 0;
+        int nBombs = 0;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                var isBomb = IsBomb(x, y);
+                var isUncovered = IsUncovered(x, y);
+                if (isBomb)
+                {
+                    nBombs++;
+                }
+                if (isUncovered)
+                {
+                    nUncovered++;
+                }
+                if (isUncovered && isBomb)
+                {
+                    return GameState.Lost;
+                }
+            }
+        }
+        if (nUncovered == width * height - nBombs)
+        {
+            return GameState.Won;
+        }
+        return GameState.Playing;
+    }
+
+
     public void UncoverTiles(int x, int y)
     {
+
         if (IsUncovered(x, y))
         {
             return;
@@ -69,7 +109,6 @@ public class Minefield
         {
             return;
         }
-
 
         GetAdjecentTilePositions(x, y)
             .ForEach(posistion => UncoverTiles(posistion.Item1, posistion.Item2));

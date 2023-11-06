@@ -101,4 +101,28 @@ public class Tests
         Assert.AreEqual(2, field.NumberOfBombs);
     }
 
+    public void Game_is_lost_if_a_bomb_is_uncovered()
+    {
+
+        var field = new Minefield(2, 2);
+        field.SetBomb(0, 0);
+
+        Assert.AreEqual(GameState.Playing, field.GetGameState());
+        field.UncoverTiles(0, 0);
+        Assert.AreEqual(GameState.Lost, field.GetGameState());
+    }
+
+    public void Game_is_won_if_a_bomb_is_uncovered()
+    {
+
+        var field = new Minefield(2, 2);
+        field.SetBomb(0, 0);
+
+        Assert.AreEqual(GameState.Playing, field.GetGameState());
+        field.UncoverTiles(0, 1);
+        field.UncoverTiles(1, 0);
+        field.UncoverTiles(1, 1);
+        Assert.AreEqual(GameState.Won, field.GetGameState());
+    }
+
 }
