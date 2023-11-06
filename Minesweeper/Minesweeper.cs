@@ -10,12 +10,12 @@ class Minesweeper
 
         field.InitializeRandomBombs(10);
 
-        var controller = new GameControler(field);
-        var display = new StdOutGameDisplay(field, controller);
+        var controller = new ConsoleGameController(field);
+        var display = new ConsoleGameDisplay(field, controller);
         while (true)
         {
             display.DrawGame();
-            controller.GetUserInput();
+            controller.HandleUserInput();
         }
 
     }

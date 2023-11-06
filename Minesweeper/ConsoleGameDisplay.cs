@@ -5,14 +5,14 @@ public interface IGameDisplay
     void DrawGame();
 }
 
-public class StdOutGameDisplay : IGameDisplay
+public class ConsoleGameDisplay : IGameDisplay
 {
     Minefield minefield;
-    GameControler gameControler;
+    IGameController gameControler;
 
     bool firstDraw = true;
 
-    public StdOutGameDisplay(Minefield minefield, GameControler controller)
+    public ConsoleGameDisplay(Minefield minefield, IGameController controller)
     {
         this.minefield = minefield;
         this.gameControler = controller;
@@ -23,7 +23,7 @@ public class StdOutGameDisplay : IGameDisplay
     {
         if (state.isCovered)
         {
-            return "⬛";
+            return "\u2588\u2588";
         }
         if (state.isBomb)
         {
@@ -36,19 +36,33 @@ public class StdOutGameDisplay : IGameDisplay
         return PadInteger(state.nAdjecentBombs);
     }
 
+    static private String GetGameStateIcon(GameState gameState)
+    {
+        return gameState switch
+        {
+            GameState.Playing => "🙂",
+            GameState.Lost => "😭",
+            GameState.Won => "😎",
+            _ => " ",
+        };
+    }
+
     public void DrawGame()
     {
         if (!firstDraw)
         {
-            Console.SetCursorPosition(0, Console.CursorTop - minefield.height);
+            Console.SetCursorPosition(0, Console.CursorTop - minefield.height - 1);
         }
         firstDraw = false;
+
+        Console.SetCursorPosition(minefield.width, Console.CursorTop);
+        Console.WriteLine(GetGameStateIcon(minefield.GetGameState()));
 
         for (int y = minefield.height - 1; y >= 0; y--)
         {
             for (int x = 0; x < minefield.width; x++)
             {
-                if (x == gameControler.cursorX && y == gameControler.cursorY)
+                if (x == gameControler.CursorX && y == gameControler.CursorY)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
