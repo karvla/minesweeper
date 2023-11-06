@@ -27,7 +27,7 @@ public class ConsoleGameDisplay : IGameDisplay
         }
         if (state.isBomb)
         {
-            return "💣";
+            return "💥";
         }
         if (state.nAdjecentBombs == 0)
         {
