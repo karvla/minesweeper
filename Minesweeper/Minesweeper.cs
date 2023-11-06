@@ -8,10 +8,16 @@ class Minesweeper
         Console.WriteLine("Use arrows to control cursor");
         Console.WriteLine("Press Enter to uncover tile");
 
-        var field = new Minefield(9, 9);
+        var height = 9;
+        var width = 9;
+        var nBombs = 10;
+
+        Console.WriteLine($"There are {nBombs} mines. Uncover all other tiles to win!");
+
+        var field = new Minefield(width, height);
         var controller = new ConsoleGameController(field);
         var display = new ConsoleGameDisplay(field, controller);
-        field.InitializeRandomBombs(10);
+        field.InitializeRandomBombs(nBombs);
 
         while (field.GetGameState() == GameState.Playing)
         {
