@@ -53,11 +53,25 @@ public class Minefield
         bombs[y, x] = true;
     }
 
-    public bool IsBomb(int x, int y) => bombs[y, x];
+    public bool IsBomb(int x, int y)
+    {
+        if (!IsWithinBoundary(x, y))
+        {
+            return false;
+        }
+        return bombs[y, x];
+    }
+
+    public bool IsUncovered(int x, int y)
+    {
+        if (!IsWithinBoundary(x, y))
+        {
+            return true;
+        }
+        return uncoveredTiles[y, x];
+    }
 
     private bool IsWithinBoundary(int x, int y) => (0 <= x && x < width && 0 <= y && y < height);
-
-    public bool IsUncovered(int x, int y) => uncoveredTiles[y, x];
 
     public TileState GetStateAtPosition(int x, int y)
     {
