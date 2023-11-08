@@ -2,24 +2,23 @@ namespace MinesweeperTest;
 using Minesweeper;
 
 [TestClass]
-public class Tests
+public class MinesweeperTests
 {
     const int width = 5;
     const int height = 5;
 
     [TestMethod]
-    public void Correct_number_of_adjacent_bombs()
+    public void SetBomb_WhenGivenBombLocations_ShouldHaveCorrectNumberOfAdjacentBombs()
     {
         var field = new Minefield(width, height);
-
-        //set the bombs...
+        // set the bombs...
         field.SetBomb(0, 0);
         field.SetBomb(0, 1);
         field.SetBomb(1, 1);
         field.SetBomb(1, 4);
         field.SetBomb(4, 2);
 
-        //the mine field should look like this now:
+        // the mine field should look like this now:
         //  01234
         //4|1X1
         //3|11111
@@ -45,7 +44,7 @@ public class Tests
     }
 
     [TestMethod]
-    public void Uncover_tiles_shoud_not_propagate_if_origin_has_adjacent_bombs()
+    public void UncoverTiles_ShouldNotPropagateWhenOriginTileHasAdjacentBombs()
     {
         var field = new Minefield(3, 3);
 
@@ -74,7 +73,60 @@ public class Tests
     }
 
     [TestMethod]
-    public void Initialize_correct_number_of_bombs()
+    public void UncoverTiles_ShouldUncoverAllTilesWhenThereAreNoBombs()
+    {
+        var field = new Minefield(3, 3);
+        field.UncoverTiles(1, 1);
+
+        for (int y = 0; y < 3; y++)
+        {
+            for (int x = 0; x < 3; x++)
+            {
+                Assert.IsTrue(field.IsUncovered(x, y));
+            }
+        }
+    }
+
+    [TestMethod]
+    public void UncoverTiles_ShouldUncoverOnlyClickedTileWhenItHasAdjacentBombs()
+    {
+        var field = new Minefield(3, 3);
+        field.SetBomb(0, 0);
+        field.UncoverTiles(1, 1);
+
+        Assert.IsTrue(field.IsUncovered(1, 1));
+        Assert.IsFalse(field.IsUncovered(0, 1));
+        Assert.IsFalse(field.IsUncovered(1, 0));
+        Assert.IsFalse(field.IsUncovered(2, 1));
+        Assert.IsFalse(field.IsUncovered(1, 2));
+
+        Assert.IsFalse(field.IsUncovered(0, 0));
+        Assert.IsFalse(field.IsUncovered(2, 0));
+        Assert.IsFalse(field.IsUncovered(0, 2));
+        Assert.IsFalse(field.IsUncovered(2, 2));
+    }
+
+    [TestMethod]
+    public void UncoverTiles_ShouldUncoverAllTilesUntilTilesWithAdjacentBombsWhenClickedTileHasNoAdjacentBombs()
+    {
+        var field = new Minefield(3, 3);
+        field.SetBomb(0, 0);
+        field.UncoverTiles(2, 2);
+
+        Assert.IsTrue(field.IsUncovered(1, 1));
+        Assert.IsTrue(field.IsUncovered(2, 1));
+        Assert.IsTrue(field.IsUncovered(1, 2));
+        Assert.IsTrue(field.IsUncovered(2, 2));
+
+        Assert.IsFalse(field.IsUncovered(0, 0));
+        Assert.IsTrue(field.IsUncovered(0, 1));
+        Assert.IsTrue(field.IsUncovered(1, 0));
+        Assert.IsTrue(field.IsUncovered(2, 0));
+        Assert.IsTrue(field.IsUncovered(0, 2));
+    }
+
+    [TestMethod]
+    public void InitializeRandomBombs_ShouldHaveCorrectNumberOfBombs()
     {
         var width = 10;
         var height = 5;
@@ -88,7 +140,7 @@ public class Tests
     }
 
     [TestMethod]
-    public void Count_corect_number_of_bombs()
+    public void SetBomb_ShouldIncrementNumberOfBombsCorrectly()
     {
         var width = 10;
         var height = 5;
@@ -101,9 +153,9 @@ public class Tests
         Assert.AreEqual(2, field.NumberOfBombs);
     }
 
-    public void Game_is_lost_if_a_bomb_is_uncovered()
+    [TestMethod]
+    public void UncoverTiles_ShouldLoseGameIfBombIsUncovered()
     {
-
         var field = new Minefield(2, 2);
         field.SetBomb(0, 0);
 
@@ -112,9 +164,9 @@ public class Tests
         Assert.AreEqual(GameState.Lost, field.GetGameState());
     }
 
-    public void Game_is_won_if_a_bomb_is_uncovered()
+    [TestMethod]
+    public void UncoverTiles_ShouldWinGameIfAllNonBombTilesAreUncovered()
     {
-
         var field = new Minefield(2, 2);
         field.SetBomb(0, 0);
 
@@ -124,5 +176,4 @@ public class Tests
         field.UncoverTiles(1, 1);
         Assert.AreEqual(GameState.Won, field.GetGameState());
     }
-
 }
